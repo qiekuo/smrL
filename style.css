@@ -1,0 +1,139 @@
+body {
+    background-color: #f1d5da; /* 濞村懐鐭囬懝锟� */
+    text-align: center;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+.c{
+    position: absolute;
+}
+.container {
+    width: 90%; /* 闁倸绨查幍瀣簚鐏炲繐绠风€硅棄瀹� */
+    max-width: 500px; /* 閺堚偓婢堆冾啍鎼达箓妾洪崚锟� */
+}
+
+.div_btn {
+            position: fixed;
+            cursor: pointer;  
+            width: 42px; 
+            height: 42px;
+            border: 2px solid white;
+            border-radius: 50%; 
+            font-size: 1em;
+            line-height: 40px;
+            text-align: center; 
+            z-index:999;
+        } 
+
+	.more-btn {
+		position: fixed;
+		cursor: pointer;
+		width: 42px;
+		height: 42px;
+		border: 2px solid white;
+		border-radius: 50%;
+		font-size: 1em;
+		line-height: 40px;
+		text-align: center;
+		z-index: 999;
+		top: 90px;
+		background-color: rgba(0, 0, 0, 0.3);
+		right: 20px;
+	}
+
+	.more-btn a {
+		cursor: pointer;
+		color: #fff;
+		text-decoration: none;
+	}
+#mainImage {
+    width: 100%; /* 閸ュ墽澧栫€硅棄瀹抽懛顏堚偓鍌氱安鐎圭懓娅� */
+    max-width: 200px; /* 閺堚偓婢堆冾啍鎼达箓妾洪崚锟� */
+    transition: all 0.3s ease;
+}
+
+h1 {
+    font-size: 5vw; /* 鐎涙ぞ缍嬫径褍鐨弽瑙勫祦鐟欏棗褰涚€硅棄瀹抽崣妯哄 */
+    color: #68495b;
+    margin: 20px 0; /* 婢х偛濮炴稉濠佺瑓闂傜绐� */
+}
+
+button {
+    font-size: 4vw; /* 鐎涙ぞ缍嬫径褍鐨弽瑙勫祦鐟欏棗褰涚€硅棄瀹抽崣妯哄 */
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 10px;
+    transition: all 0.3s ease;
+}
+
+#yes {
+    background-color: #d4818e; /* 缁澹� */
+    color: white;
+}
+
+#no {
+    background-color: #6784b1; /* 閽冩繆澹� */
+    color: white;
+    position: relative;
+}
+
+.yes-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: #ffcad382;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.yes-text {
+    font-size: 7vw; /* 鐎涙ぞ缍嬫径褍鐨弽瑙勫祦鐟欏棗褰涚€硅棄瀹抽崣妯哄 */
+}
+
+.yes-image {
+    width: 50%; /* 閸ュ墽澧栫€硅棄瀹抽懛顏堚偓鍌氱安鐎圭懓娅� */
+    max-width: 300px; /* 閺堚偓婢堆冾啍鎼达箓妾洪崚锟� */
+}
+
+/* 閻絻鍓崇粩顖涚壉瀵繋绱崠锟� */
+@media (min-width: 768px) {
+    body {
+        display: block;
+    }
+
+    .container {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: auto;
+        max-width: none;
+    }
+
+    #mainImage {
+        width: 200px; /* 閸ュ搫鐣鹃崶鍓у鐎硅棄瀹� */
+    }
+
+    h1 {
+        font-size: 28px; /* 閸ュ搫鐣剧€涙ぞ缍嬫径褍鐨� */
+        margin: 20px 0;
+    }
+
+    button {
+        font-size: 18px; /* 閸ュ搫鐣剧€涙ぞ缍嬫径褍鐨� */
+    }
+
+    .yes-text {
+        font-size: 36px; /* 閸ュ搫鐣剧€涙ぞ缍嬫径褍鐨� */
+    }
