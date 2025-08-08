@@ -1,442 +1,241 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>I LOVE U 爱心动画</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-	<head>
-		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-		<title>蕊蕊，可以原谅我吗？</title>
-		<!-- <link rel="stylesheet" href="./style.css"> -->
-		<style lang="scss">
-			body {
-				background-color: #f1d5da;
-				text-align: center;
-				font-family: Arial, sans-serif;
-				margin: 0;
-				padding: 0;
-				display: flex;
-				justify-content: center;
-				align-items: center;
-				height: 100vh;
-			}
+        body {
+            background: #000;
+            overflow: hidden;
+            font-family: 'Arial', sans-serif;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
 
-			.c {
-				position: absolute;
-			}
+        #canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
 
-			.container {
-				width: 90%;
-				max-width: 500px;
-			}
+        .love-text {
+            position: relative;
+            font-size: 6vw;
+            font-weight: bold;
+            z-index: 2;
+            text-align: center;
+            color: #6fecff;
+            text-shadow: 0 0 10px rgba(111, 236, 255, 0.8),
+                        0 0 20px rgba(111, 236, 255, 0.6),
+                        0 0 30px rgba(111, 236, 255, 0.4);
+            padding: 20px 40px;
+            border-radius: 15px;
+            animation: pulse 2s infinite, bounce 3s ease-in-out infinite;
+        }
 
-			.div_btn {
-				position: fixed;
-				cursor: pointer;
-				width: 42px;
-				height: 42px;
-				border: 2px solid white;
-				border-radius: 50%;
-				font-size: 1em;
-				line-height: 40px;
-				text-align: center;
-				z-index: 999;
-			}
+        .subtitle {
+            display: block;
+            font-size: 1.5vw;
+            letter-spacing: 2px;
+            margin-top: 10px;
+            color: #ffc1fa;
+        }
 
-			.more-btn {
-				position: fixed;
-				cursor: pointer;
-				width: 42px;
-				height: 42px;
-				border: 2px solid white;
-				border-radius: 50%;
-				font-size: 1em;
-				line-height: 40px;
-				text-align: center;
-				z-index: 999;
-				top: 90px;
-				background-color: rgba(0, 0, 0, 0.3);
-				right: 20px;
-			}
+        /* 文字动画 */
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+                text-shadow: 0 0 10px rgba(111, 236, 255, 0.8),
+                            0 0 20px rgba(111, 236, 255, 0.6),
+                            0 0 30px rgba(111, 236, 255, 0.4);
+            }
+            50% {
+                transform: scale(1.05);
+                text-shadow: 0 0 15px rgba(111, 236, 255, 1),
+                            0 0 30px rgba(111, 236, 255, 0.8),
+                            0 0 45px rgba(111, 236, 255, 0.6);
+            }
+        }
 
-			.more-btn a {
-				cursor: pointer;
-				color: #fff;
-				text-decoration: none;
-			}
+        @keyframes bounce {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+        
+        .footer {
+            position: absolute;
+            bottom: 20px;
+            z-index: 3;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 12px;
+            text-align: center;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="canvas"></canvas>
+    <div class="love-text">
+        I LOVE U
+        <span class="subtitle">FOREVER & ALWAYS</span>
+    </div>
+    <div class="footer">Click anywhere to add more hearts!</div>
 
-			#mainImage {
-				width: 100%;
-				max-width: 200px;
-				transition: all 0.3s ease;
-			}
-
-			h1 {
-				font-size: 5vw;
-				color: #68495b;
-				margin: 20px 0;
-			}
-
-			button {
-				font-size: 4vw;
-				padding: 10px 20px;
-				border: none;
-				border-radius: 5px;
-				cursor: pointer;
-				margin: 10px;
-				transition: all 0.3s ease;
-			}
-
-			#yes {
-				background-color: #d4818e;
-				color: white;
-			}
-
-			#no {
-				background-color: #6784b1;
-				color: white;
-				position: relative;
-			}
-
-			.yes-screen {
-				position: fixed;
-				top: 0;
-				left: 0;
-				width: 100vw;
-				height: 100vh;
-				background-color: #ffcad382;
-				display: flex;
-				flex-direction: column;
-				align-items: center;
-				justify-content: center;
-			}
-
-			.yes-text {
-				font-size: 7vw;
-			}
-
-			.yes-image {
-				width: 50%;
-				max-width: 300px;
-			}
-
-			@media (min-width: 768px) {
-				body {
-					display: block;
-				}
-
-				.container {
-					position: absolute;
-					top: 50%;
-					left: 50%;
-					transform: translate(-50%, -50%);
-					width: auto;
-					max-width: none;
-				}
-
-				#mainImage {
-					width: 200px;
-				}
-
-				h1 {
-					font-size: 28px;
-					margin: 20px 0;
-				}
-
-				button {
-					font-size: 18px;
-				}
-
-				.yes-text {
-					font-size: 36px;
-				}
-		</style>
-		<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-		<script charset="UTF-8" id="LA_COLLECT" src="//sdk.51.la/js-sdk-pro.min.js"></script>
-		<script>
-			LA.init({
-				id: "JkV63okvFHrHwPbJ",
-				ck: "JkV63okvFHrHwPbJ"
-			})
-		</script>
-	</head>
-
-	<body>
-		<audio id="yesSound"
-			src="https://sf5-hl-cdn-tos.douyinstatic.com/obj/ies-music/7108171180007377695.mp3"></audio>
-		<div class="container">
-			<img id="mainImage" src="https://dy.dw0.cn/uploads2/20250222/0a642d289ae2febbd00beb6fb7f1807d.png" alt="爱心">
-			<h1 id="question">蕊蕊，可以原谅我吗？</h1>
-			<div class="buttons">
-				<button id="yes">可以</button>
-				<button id="no">不要</button>
-			</div>
-		</div>
-		<canvas id="c" class="c" style="z-index: -1;text-align: center;"></canvas>
-
-		<script>
-			var canvas = document.getElementById("c");
-			var ctx = canvas.getContext("2d");
-			var c = $("#c");
-			var w, h;
-			var pi = Math.PI;
-			var all_attribute = {
-				num: 10,
-				start_probability: 0.1,
-				size_min: 1,
-				size_max: 2,
-				size_add_min: 0.3,
-				size_add_max: 0.5,
-				opacity_min: 0.5,
-				opacity_max: 0.5,
-				opacity_prev_min: .003,
-				opacity_prev_max: .005,
-				light_min: 0,
-				light_max: 90
-			};
-			var style_color = find_random(0, 360);
-			var all_element = [];
-
-			function start() {
-
-				window.requestAnimationFrame(start);
-				style_color += 0.1;
-				ctx.fillStyle = 'hsl(' + style_color + ',100%,97%)';
-				ctx.fillRect(0, 0, w, h);
-				if (all_element.length < all_attribute.num && Math.random() < all_attribute.start_probability) {
-					all_element.push(new ready_run);
-				}
-				all_element.map(function(line) {
-					line.to_step();
-				})
-			}
-
-			function ready_run() {
-				this.to_reset();
-			}
-
-			function arc_heart(x, y, z, m) {
-				y -= m * 10;
-				ctx.moveTo(x, y);
-				z *= 0.05;
-				ctx.bezierCurveTo(x, y - 3 * z, x - 5 * z, y - 15 * z, x - 25 * z, y - 15 * z);
-				ctx.bezierCurveTo(x - 55 * z, y - 15 * z, x - 55 * z, y + 22.5 * z, x - 55 * z, y + 22.5 * z);
-				ctx.bezierCurveTo(x - 55 * z, y + 40 * z, x - 35 * z, y + 62 * z, x, y + 80 * z);
-				ctx.bezierCurveTo(x + 35 * z, y + 62 * z, x + 55 * z, y + 40 * z, x + 55 * z, y + 22.5 * z);
-				ctx.bezierCurveTo(x + 55 * z, y + 22.5 * z, x + 55 * z, y - 15 * z, x + 25 * z, y - 15 * z);
-				ctx.bezierCurveTo(x + 10 * z, y - 15 * z, x, y - 3 * z, x, y);
-			}
-
-			ready_run.prototype = {
-				to_reset: function() {
-					var t = this;
-					t.x = find_random(0, w);
-					t.y = find_random(0, h);
-					t.size = find_random(all_attribute.size_min, all_attribute.size_max);
-					t.size_change = find_random(all_attribute.size_add_min, all_attribute.size_add_max);
-					t.opacity = find_random(all_attribute.opacity_min, all_attribute.opacity_max);
-					t.opacity_change = find_random(all_attribute.opacity_prev_min, all_attribute.opacity_prev_max);
-					t.light = find_random(all_attribute.light_min, all_attribute.light_max);
-					t.color = 'hsl(330, 100%, 75%)';
-				},
-				to_step: function() {
-					var t = this;
-					t.opacity -= t.opacity_change;
-					t.size += t.size_change;
-					if (t.opacity <= 0) {
-						t.to_reset();
-						return false;
-					}
-					ctx.fillStyle = t.color;
-					ctx.globalAlpha = t.opacity;
-					ctx.beginPath();
-					arc_heart(t.x, t.y, t.size, t.size);
-					ctx.closePath();
-					ctx.fill();
-					ctx.globalAlpha = 1;
-				}
-			}
-
-			function window_resize() {
-				w = window.innerWidth;
-				h = window.innerHeight;
-				canvas.width = w;
-				canvas.height = h;
-			}
-
-			$(window).resize(function() {
-				window_resize();
-			});
-
-			function find_random(num_one, num_two) {
-				return Math.random() * (num_two - num_one) + num_one;
-			}
-		</script>
-
-		<script>
-			var canvas = document.getElementById("c");
-			var ctx = canvas.getContext("2d");
-			var c = $("#c");
-			var w, h;
-			var pi = Math.PI;
-			var all_attribute = {
-				num: 10,
-				start_probability: 0.1,
-				size_min: 1,
-				size_max: 2,
-				size_add_min: 0.3,
-				size_add_max: 0.5,
-				opacity_min: 0.5,
-				opacity_max: 0.5,
-				opacity_prev_min: .003,
-				opacity_prev_max: .005,
-				light_min: 0,
-				light_max: 90
-			};
-			var style_color = find_random(0, 360);
-			var all_element = [];
-
-			function start() {
-
-				window.requestAnimationFrame(start);
-				style_color += 0.1;
-				ctx.fillStyle = 'hsl(' + style_color + ',100%,97%)';
-				ctx.fillRect(0, 0, w, h);
-				if (all_element.length < all_attribute.num && Math.random() < all_attribute.start_probability) {
-					all_element.push(new ready_run);
-				}
-				all_element.map(function(line) {
-					line.to_step();
-				})
-			}
-
-			function ready_run() {
-				this.to_reset();
-			}
-
-			function arc_heart(x, y, z, m) {
-				y -= m * 10;
-				ctx.moveTo(x, y);
-				z *= 0.05;
-				ctx.bezierCurveTo(x, y - 3 * z, x - 5 * z, y - 15 * z, x - 25 * z, y - 15 * z);
-				ctx.bezierCurveTo(x - 55 * z, y - 15 * z, x - 55 * z, y + 22.5 * z, x - 55 * z, y + 22.5 * z);
-				ctx.bezierCurveTo(x - 55 * z, y + 40 * z, x - 35 * z, y + 62 * z, x, y + 80 * z);
-				ctx.bezierCurveTo(x + 35 * z, y + 62 * z, x + 55 * z, y + 40 * z, x + 55 * z, y + 22.5 * z);
-				ctx.bezierCurveTo(x + 55 * z, y + 22.5 * z, x + 55 * z, y - 15 * z, x + 25 * z, y - 15 * z);
-				ctx.bezierCurveTo(x + 10 * z, y - 15 * z, x, y - 3 * z, x, y);
-			}
-
-			ready_run.prototype = {
-				to_reset: function() {
-					var t = this;
-					t.x = find_random(0, w);
-					t.y = find_random(0, h);
-					t.size = find_random(all_attribute.size_min, all_attribute.size_max);
-					t.size_change = find_random(all_attribute.size_add_min, all_attribute.size_add_max);
-					t.opacity = find_random(all_attribute.opacity_min, all_attribute.opacity_max);
-					t.opacity_change = find_random(all_attribute.opacity_prev_min, all_attribute.opacity_prev_max);
-					t.light = find_random(all_attribute.light_min, all_attribute.light_max);
-					t.color = 'hsl(330, 100%, 75%)';
-				},
-				to_step: function() {
-					var t = this;
-					t.opacity -= t.opacity_change;
-					t.size += t.size_change;
-					if (t.opacity <= 0) {
-						t.to_reset();
-						return false;
-					}
-					ctx.fillStyle = t.color;
-					ctx.globalAlpha = t.opacity;
-					ctx.beginPath();
-					arc_heart(t.x, t.y, t.size, t.size);
-					ctx.closePath();
-					ctx.fill();
-					ctx.globalAlpha = 1;
-				}
-			}
-
-			function window_resize() {
-				w = window.innerWidth;
-				h = window.innerHeight;
-				canvas.width = w;
-				canvas.height = h;
-			}
-
-			$(window).resize(function() {
-				window_resize();
-			});
-
-			function find_random(num_one, num_two) {
-				return Math.random() * (num_two - num_one) + num_one;
-			}
-		</script>
-
-		<script>
-			const yesSound = document.getElementById('yesSound');
-			let yesButton = document.getElementById("yes");
-			let noButton = document.getElementById("no");
-			let questionText = document.getElementById("question");
-			let mainImage = document.getElementById("mainImage");
-
-			let clickCount = 0;
-
-			const noTexts = [
-				"？你认真的吗…",
-				"要不再想想？",
-				"不许选这个！ ",
-				"我会很伤心…",
-				"不行:("
-			];
-
-			noButton.addEventListener("click", function() {
-				clickCount++;
-				let yesSize = 1 + (clickCount * 1.2);
-				yesButton.style.transform = `scale(${yesSize})`;
-				let noOffset = clickCount * 50;
-				noButton.style.transform = `translateX(${noOffset}px)`;
-				let moveUp = clickCount * 25;
-				mainImage.style.transform = `translateY(-${moveUp}px)`;
-				questionText.style.transform = `translateY(-${moveUp}px)`;
-				if (clickCount <= 5) {
-					noButton.innerText = noTexts[clickCount - 1];
-				}
-				if (clickCount === 1) mainImage.src =
-					"https://dy.dw0.cn/uploads2/20250222/8e2317bb70ec0beeb30f4522cac1e915.png";
-				if (clickCount === 2) mainImage.src =
-					"https://dy.dw0.cn/uploads2/20250222/85e54dee5f519ff1a2b8aa7e370db816.png";
-				if (clickCount === 3) mainImage.src =
-					"https://dy.dw0.cn/uploads2/20250222/74c1e4c813a3fc129c9bea588d00c4d7.png";
-				if (clickCount === 4) mainImage.src =
-					"https://dy.dw0.cn/uploads2/20250222/61cff1367160c5009001e06a0d0e089e.png";
-				if (clickCount >= 5) mainImage.src =
-					"https://dy.dw0.cn/uploads2/20250222/61cff1367160c5009001e06a0d0e089e.png";
-			});
-
-			yesButton.addEventListener("click", function() {
-				setTimeout(function() {
-					yesSound.play();
-				}, 100);
-				window_resize();
-				// 启动动画
-				start();
-				const yesScreen = document.createElement('div');
-				yesScreen.className = 'yes-screen';
-				yesScreen.innerHTML = `
-                <h1 class="yes-text">!!!喜欢你!! ( >᎑<)♡︎ᐝ</h1>
-                <img src="https://dy.dw0.cn/uploads2/20250222/4f8cf95a226175ba3451ee0080a39ad7.png" alt="拥抱" class="yes-image">
+    <script>
+        // 获取Canvas元素和上下文
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        
+        // 设置Canvas大小为窗口大小
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        
+        // 初始调整大小
+        resizeCanvas();
+        
+        // 窗口大小变化时重新调整Canvas
+        window.addEventListener('resize', resizeCanvas);
+        
+        // 爱心类
+        class Heart {
+            constructor() {
+                this.reset();
+                this.size = Math.random() * 15 + 5;
+                this.color = {
+                    r: Math.floor(Math.random() * 55 + 200),
+                    g: Math.floor(Math.random() * 100),
+                    b: Math.floor(Math.random() * 100 + 150)
+                };
+            }
+            
+            reset() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 15 + 5;
+                this.speed = Math.random() * 0.5 + 0.1;
+                this.alpha = Math.random() * 0.5 + 0.5;
+                this.vx = (Math.random() - 0.5) * 1;
+                this.vy = Math.random() * -2 - 1;
+                this.oscillation = Math.random() * 0.05;
+                this.phase = Math.random() * Math.PI * 2;
+            }
+            
+            draw() {
+                ctx.save();
+                ctx.beginPath();
                 
+                // 绘制爱心形状
+                const curveOffset = this.size / 2.5;
+                const topIndent = this.size * 0.1;
                 
-</div>
-            `;
-				// 清空 body 并添加新结构和 canvas
-				document.body.innerHTML = '';
-				document.body.appendChild(yesScreen);
-				document.body.appendChild(canvas);
-				document.body.style.overflow = "hidden";
-				document.getElementById('c').classList.remove('c')
-
-			});
-		</script>
-
-	</body>
-
+                ctx.moveTo(this.x, this.y + this.size/3);
+                ctx.bezierCurveTo(
+                    this.x, this.y - curveOffset + topIndent,
+                    this.x - this.size/2, this.y - curveOffset,
+                    this.x - this.size/2, this.y - topIndent
+                );
+                ctx.bezierCurveTo(
+                    this.x - this.size/2, this.y + this.size/3,
+                    this.x, this.y + this.size/1.5,
+                    this.x + this.size/2, this.y - topIndent
+                );
+                ctx.bezierCurveTo(
+                    this.x + this.size/2, this.y - curveOffset,
+                    this.x, this.y - curveOffset + topIndent,
+                    this.x, this.y + this.size/3
+                );
+                
+                // 添加发光效果
+                const gradient = ctx.createRadialGradient(
+                    this.x, this.y - this.size/3, 0,
+                    this.x, this.y - this.size/3, this.size * 1.5
+                );
+                
+                gradient.addColorStop(0, `rgba(${this.color.r}, ${this.color.g}, ${this.color.b}, ${this.alpha})`);
+                gradient.addColorStop(1, `rgba(${this.color.r}, ${this.color.g}, ${this.color.b}, 0)`);
+                
+                ctx.fillStyle = gradient;
+                ctx.shadowColor = `rgba(${this.color.r}, ${this.color.g}, ${this.color.b}, ${this.alpha * 0.7})`;
+                ctx.shadowBlur = 15;
+                
+                ctx.fill();
+                ctx.restore();
+            }
+            
+            update() {
+                this.phase += this.oscillation;
+                this.alpha = 0.5 + Math.sin(this.phase) * 0.3;
+                
+                this.x += this.vx;
+                this.y += this.vy;
+                this.vy += 0.05;
+                
+                // 如果超出视口，重新生成
+                if (
+                    this.y > canvas.height + this.size || 
+                    this.x < -this.size || 
+                    this.x > canvas.width + this.size
+                ) {
+                    this.reset();
+                }
+            }
+        }
+        
+        // 创建爱心数组
+        const hearts = [];
+        const heartCount = 200;
+        
+        for (let i = 0; i < heartCount; i++) {
+            setTimeout(() => {
+                hearts.push(new Heart());
+            }, i * 50);
+        }
+        
+        // 动画循环
+        function animate() {
+            // 清屏，使用黑色半透明填充创建拖尾效果
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // 更新和绘制所有爱心
+            hearts.forEach(heart => {
+                heart.update();
+                heart.draw();
+            });
+            
+            requestAnimationFrame(animate);
+        }
+        
+        // 开始动画
+        animate();
+        
+        // 点击添加更多爱心
+        canvas.addEventListener('click', (e) => {
+            const newHeart = new Heart();
+            newHeart.x = e.clientX;
+            newHeart.y = e.clientY;
+            newHeart.vy = -Math.random() * 3 - 1;
+            hearts.push(newHeart);
+        });
+    </script>
+</body>
 </html>
