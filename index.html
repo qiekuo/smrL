@@ -1,241 +1,889 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
+<html lang="zh-CN"><head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>I LOVE U 爱心动画</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            background: #000;
-            overflow: hidden;
-            font-family: 'Arial', sans-serif;
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            position: relative;
-        }
-
-        #canvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 1;
-        }
-
-        .love-text {
-            position: relative;
-            font-size: 6vw;
-            font-weight: bold;
-            z-index: 2;
-            text-align: center;
-            color: #6fecff;
-            text-shadow: 0 0 10px rgba(111, 236, 255, 0.8),
-                        0 0 20px rgba(111, 236, 255, 0.6),
-                        0 0 30px rgba(111, 236, 255, 0.4);
-            padding: 20px 40px;
-            border-radius: 15px;
-            animation: pulse 2s infinite, bounce 3s ease-in-out infinite;
-        }
-
-        .subtitle {
-            display: block;
-            font-size: 1.5vw;
-            letter-spacing: 2px;
-            margin-top: 10px;
-            color: #ffc1fa;
-        }
-
-        /* 文字动画 */
-        @keyframes pulse {
-            0%, 100% {
-                transform: scale(1);
-                text-shadow: 0 0 10px rgba(111, 236, 255, 0.8),
-                            0 0 20px rgba(111, 236, 255, 0.6),
-                            0 0 30px rgba(111, 236, 255, 0.4);
-            }
-            50% {
-                transform: scale(1.05);
-                text-shadow: 0 0 15px rgba(111, 236, 255, 1),
-                            0 0 30px rgba(111, 236, 255, 0.8),
-                            0 0 45px rgba(111, 236, 255, 0.6);
-            }
-        }
-
-        @keyframes bounce {
-            0%, 100% {
-                transform: translateY(0);
-            }
-            50% {
-                transform: translateY(-10px);
-            }
-        }
-        
-        .footer {
-            position: absolute;
-            bottom: 20px;
-            z-index: 3;
-            color: rgba(255, 255, 255, 0.5);
-            font-size: 12px;
-            text-align: center;
-            width: 100%;
-        }
-    </style>
-</head>
-<body>
-    <canvas id="canvas"></canvas>
-    <div class="love-text">
-        I LOVE U
-        <span class="subtitle">FOREVER & ALWAYS</span>
-    </div>
-    <div class="footer">Click anywhere to add more hearts!</div>
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="format-detection" content="telephone=no">
+    <title>七夕告白 | 爱的玫瑰心</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
     <script>
-        // 获取Canvas元素和上下文
-        const canvas = document.getElementById('canvas');
-        const ctx = canvas.getContext('2d');
-        
-        // 设置Canvas大小为窗口大小
-        function resizeCanvas() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        }
-        
-        // 初始调整大小
-        resizeCanvas();
-        
-        // 窗口大小变化时重新调整Canvas
-        window.addEventListener('resize', resizeCanvas);
-        
-        // 爱心类
-        class Heart {
-            constructor() {
-                this.reset();
-                this.size = Math.random() * 15 + 5;
-                this.color = {
-                    r: Math.floor(Math.random() * 55 + 200),
-                    g: Math.floor(Math.random() * 100),
-                    b: Math.floor(Math.random() * 100 + 150)
-                };
-            }
-            
-            reset() {
-                this.x = Math.random() * canvas.width;
-                this.y = Math.random() * canvas.height;
-                this.size = Math.random() * 15 + 5;
-                this.speed = Math.random() * 0.5 + 0.1;
-                this.alpha = Math.random() * 0.5 + 0.5;
-                this.vx = (Math.random() - 0.5) * 1;
-                this.vy = Math.random() * -2 - 1;
-                this.oscillation = Math.random() * 0.05;
-                this.phase = Math.random() * Math.PI * 2;
-            }
-            
-            draw() {
-                ctx.save();
-                ctx.beginPath();
-                
-                // 绘制爱心形状
-                const curveOffset = this.size / 2.5;
-                const topIndent = this.size * 0.1;
-                
-                ctx.moveTo(this.x, this.y + this.size/3);
-                ctx.bezierCurveTo(
-                    this.x, this.y - curveOffset + topIndent,
-                    this.x - this.size/2, this.y - curveOffset,
-                    this.x - this.size/2, this.y - topIndent
-                );
-                ctx.bezierCurveTo(
-                    this.x - this.size/2, this.y + this.size/3,
-                    this.x, this.y + this.size/1.5,
-                    this.x + this.size/2, this.y - topIndent
-                );
-                ctx.bezierCurveTo(
-                    this.x + this.size/2, this.y - curveOffset,
-                    this.x, this.y - curveOffset + topIndent,
-                    this.x, this.y + this.size/3
-                );
-                
-                // 添加发光效果
-                const gradient = ctx.createRadialGradient(
-                    this.x, this.y - this.size/3, 0,
-                    this.x, this.y - this.size/3, this.size * 1.5
-                );
-                
-                gradient.addColorStop(0, `rgba(${this.color.r}, ${this.color.g}, ${this.color.b}, ${this.alpha})`);
-                gradient.addColorStop(1, `rgba(${this.color.r}, ${this.color.g}, ${this.color.b}, 0)`);
-                
-                ctx.fillStyle = gradient;
-                ctx.shadowColor = `rgba(${this.color.r}, ${this.color.g}, ${this.color.b}, ${this.alpha * 0.7})`;
-                ctx.shadowBlur = 15;
-                
-                ctx.fill();
-                ctx.restore();
-            }
-            
-            update() {
-                this.phase += this.oscillation;
-                this.alpha = 0.5 + Math.sin(this.phase) * 0.3;
-                
-                this.x += this.vx;
-                this.y += this.vy;
-                this.vy += 0.05;
-                
-                // 如果超出视口，重新生成
-                if (
-                    this.y > canvas.height + this.size || 
-                    this.x < -this.size || 
-                    this.x > canvas.width + this.size
-                ) {
-                    this.reset();
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        rose: {
+                            red: '#E63946',
+                            redDark: '#C1121F',
+                            redLight: '#FF6B6B',
+                            pink: '#FFB7C5',
+                            pinkDark: '#FF8FA3',
+                            cream: '#FFF1E6',
+                            creamDark: '#FFE4D6',
+                            gold: '#FFD700'
+                        }
+                    },
+                    fontFamily: {
+                        romantic: ['Dancing Script', 'cursive', 'sans-serif'],
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    },
                 }
             }
         }
-        
-        // 创建爱心数组
-        const hearts = [];
-        const heartCount = 200;
-        
-        for (let i = 0; i < heartCount; i++) {
-            setTimeout(() => {
-                hearts.push(new Heart());
-            }, i * 50);
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .text-shadow {
+                text-shadow: 0 2px 10px rgba(230, 57, 70, 0.5);
+            }
+            .star {
+                position: absolute;
+                background-color: white;
+                border-radius: 50%;
+                animation: twinkle 2s infinite alternate;
+            }
+            @keyframes twinkle {
+                0% { opacity: 0.3; transform: scale(0.8); }
+                100% { opacity: 1; transform: scale(1.2); }
+            }
+            .shine {
+                position: relative;
+                overflow: hidden;
+            }
+            .shine::after {
+                content: '';
+                position: absolute;
+                top: -50%;
+                left: -50%;
+                width: 200%;
+                height: 200%;
+                background: linear-gradient(
+                    to right,
+                    rgba(255, 255, 255, 0) 0%,
+                    rgba(255, 255, 255, 0.3) 50%,
+                    rgba(255, 255, 255, 0) 100%
+                );
+                transform: rotate(30deg);
+                animation: shine 6s infinite;
+            }
+            @keyframes shine {
+                0% { transform: rotate(30deg) translate(-100%, -100%); }
+                100% { transform: rotate(30deg) translate(100%, 100%); }
+            }
+            .floating {
+                animation: floating 6s ease-in-out infinite;
+            }
+            @keyframes floating {
+                0% { transform: translateY(0) rotate(0deg); }
+                50% { transform: translateY(-15px) rotate(2deg); }
+                100% { transform: translateY(0) rotate(0deg); }
+            }
+            .petal {
+                position: absolute;
+                transition: all 0.3s ease;
+                transform-origin: center center;
+                touch-action: manipulation;
+            }
+            .petal:hover {
+                transform: scale(1.1) rotate(5deg);
+                z-index: 20;
+            }
+            .heart-beat {
+                animation: heartBeat 1.5s infinite;
+            }
+            @keyframes heartBeat {
+                0% { transform: scale(1); }
+                14% { transform: scale(1.1); }
+                28% { transform: scale(1); }
+                42% { transform: scale(1.1); }
+                70% { transform: scale(1); }
+            }
+            /* 触摸反馈效果 */
+            .touch-feedback {
+                -webkit-tap-highlight-color: transparent;
+            }
+            .btn-active {
+                transform: scale(0.95);
+                opacity: 0.9;
+            }
         }
-        
-        // 动画循环
-        function animate() {
-            // 清屏，使用黑色半透明填充创建拖尾效果
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&amp;display=swap" rel="stylesheet">
+</head>
+<body class="min-h-screen flex flex-col overflow-x-hidden bg-gradient-to-b from-purple-900 via-indigo-900 to-blue-950 touch-feedback">
+    <!-- 星空背景 -->
+    <div id="stars" class="fixed top-0 left-0 w-full h-full pointer-events-none z-0"></div>
+
+    <!-- 页面头部 -->
+    <header class="w-full py-4 px-4 md:px-8 bg-white/10 backdrop-blur-sm shadow-sm relative z-10 border-b border-white/10">
+        <div class="container mx-auto flex flex-col md:flex-row justify-between items-center">
+            <h1 class="text-[clamp(1.5rem,6vw,3rem)] font-romantic font-bold text-rose-pink text-shadow text-center md:text-left">
+                <i class="fa fa-heart text-rose-red mr-2 animate-pulse"></i>七夕·爱的告白
+            </h1>
+            <p class="text-rose-pink/80 italic mt-1 md:mt-0 font-romantic text-lg">以玫瑰之心，诉说爱意</p>
+        </div>
+    </header>
+
+    <!-- 主要内容区 -->
+    <main class="flex-grow container mx-auto px-4 py-6 md:py-16 flex flex-col items-center justify-center relative z-10">
+        <div class="max-w-4xl w-full mx-auto">
+            <!-- 告白卡片 -->
+            <div class="bg-white/10 backdrop-blur-md rounded-2xl shadow-xl p-5 md:p-8 mb-6 shine border border-white/10">
+                <div class="text-center mb-5">
+                    <h2 class="text-[clamp(1.3rem,5vw,2.5rem)] font-romantic text-rose-pink">亲爱的蕊蕊，</h2>
+                    <p class="text-white/80 mt-3 max-w-2xl mx-auto leading-relaxed text-sm md:text-base">
+                        七夕之夜，星光璀璨，我将万千爱意化作这束玫瑰心，
+                        每一朵鲜花都代表我对你的思念，每一片花瓣都承载着我对你的深情。
+                        愿这颗永恒之心，见证我们的爱。
+                    </p>
+                    <p class="text-rose-pink font-romantic text-lg mt-4">点击任意处，绽放爱的烟花</p>
+                </div>
+            </div>
             
-            // 更新和绘制所有爱心
-            hearts.forEach(heart => {
-                heart.update();
-                heart.draw();
+            <!-- 鲜花爱心容器 -->
+            <div class="relative bg-white/5 backdrop-blur-md rounded-2xl shadow-lg p-4 md:p-10 mb-6 overflow-hidden border border-white/10">
+                <!-- 装饰光晕 -->
+                <div class="absolute top-1/2 left-1/2 w-[80%] h-[80%] bg-rose-pink/20 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2"></div>
+                
+                <!-- 爱心标题 -->
+                <div class="text-center mb-5 relative z-10">
+                    <h2 class="text-[clamp(1.2rem,4vw,1.8rem)] font-romantic text-rose-pink">爱的玫瑰心</h2>
+                    <p class="text-white/60 mt-1">每一朵鲜花，都是爱的见证</p>
+                </div>
+                
+                <!-- 爱心容器 - 自适应高度 -->
+                <div id="heart-container" class="w-full h-[300px] sm:h-[400px] md:h-[600px] relative mx-auto floating">
+                    <!-- 鲜花爱心将通过JS动态生成 -->
+                    
+                    <!-- SVG用于点击互动效果 -->
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="100%" height="100%" class="absolute top-0 left-0 pointer-events-none">
+                        <g id="particles"></g>
+                    </svg>
+                </div>
+            </div>
+            
+            <!-- 互动提示卡片 -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4 shadow-md hover:shadow-lg transition-all duration-300 border border-white/10 hover:border-white/20 transform hover:-translate-y-1">
+                    <div class="text-rose-pink text-3xl mb-2">
+                        <i class="fa fa-heart"></i>
+                    </div>
+                    <h3 class="font-romantic text-xl mb-2 text-rose-pink">爱的互动</h3>
+                    <p class="text-white/70 text-sm">点击任意位置，会绽放美丽的烟花和爱心粒子，每一次点击都是爱的表达。</p>
+                </div>
+                
+                <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4 shadow-md hover:shadow-lg transition-all duration-300 border border-white/10 hover:border-white/20 transform hover:-translate-y-1">
+                    <div class="text-rose-gold text-3xl mb-2">
+                        <i class="fa fa-star"></i>
+                    </div>
+                    <h3 class="font-romantic text-xl mb-2 text-rose-pink">星空见证</h3>
+                    <p class="text-white/70 text-sm">璀璨星空下，这颗玫瑰心象征着我们永恒的爱，永不凋零，永远闪耀。</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 告白按钮 - 增大触摸区域 -->
+    <div class="text-center py-6 px-4 relative z-10">
+        <button id="confess-btn" class="bg-rose-red hover:bg-rose-redDark text-white font-romantic text-xl py-4 px-12 rounded-full shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-1 duration-300 touch-feedback">
+            <i class="fa fa-heart mr-2"></i>发送爱的告白
+        </button>
+    </div>
+
+    <!-- 告白弹窗 -->
+    <div id="confess-modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 hidden">
+        <div class="bg-white/10 backdrop-blur-lg rounded-2xl p-6 max-w-md w-full mx-4 transform transition-all scale-95 opacity-0 border border-white/20" id="modal-content">
+            <h3 class="text-2xl font-romantic text-rose-pink text-center mb-3">我爱你</h3>
+            <p class="text-white/80 text-center mb-5 text-sm">从遇见你的那一刻起，我的心就为你而跳动。愿我们的爱，如这玫瑰心般永不凋零。</p>
+            <div class="flex justify-center">
+                <button id="close-modal" class="bg-rose-pink/80 hover:bg-rose-pink text-white py-3 px-8 rounded-full transition-colors touch-feedback">
+                    收下我的爱
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 页脚 -->
+    <footer class="w-full py-4 px-4 bg-white/5 backdrop-blur-sm shadow-inner relative z-10 border-t border-white/10">
+        <div class="container mx-auto text-center text-white/60">
+            <p class="font-romantic text-lg">七夕节 · 农历七月初七</p>
+            <p class="mt-1 text-sm">愿咱俩有情人终成眷属❤️😘</p>
+        </div>
+    </footer>
+
+    <script>
+        // 页面加载完成后执行
+        document.addEventListener('DOMContentLoaded', function() {
+            // 创建星空背景
+            createStars();
+            
+            // 生成鲜花爱心
+            createFlowerHeart();
+            
+            // 获取元素
+            const heartContainer = document.getElementById('heart-container');
+            const svg = heartContainer.querySelector('svg');
+            const particlesContainer = document.getElementById('particles');
+            const confessBtn = document.getElementById('confess-btn');
+            const confessModal = document.getElementById('confess-modal');
+            const modalContent = document.getElementById('modal-content');
+            const closeModal = document.getElementById('close-modal');
+            const body = document.body;
+            
+            // 触摸反馈效果
+            function addTouchFeedback(element) {
+                element.addEventListener('touchstart', function() {
+                    this.classList.add('btn-active');
+                });
+                element.addEventListener('touchend', function() {
+                    this.classList.remove('btn-active');
+                });
+                element.addEventListener('touchcancel', function() {
+                    this.classList.remove('btn-active');
+                });
+            }
+            
+            // 为按钮添加触摸反馈
+            addTouchFeedback(confessBtn);
+            addTouchFeedback(closeModal);
+            
+            // 全局点击/触摸事件 - 触发烟花效果
+            function handleInteraction(e) {
+                // 计算相对于视口的位置
+                let x, y;
+                if (e.type.includes('touch')) {
+                    // 触摸事件
+                    x = e.touches[0].clientX;
+                    y = e.touches[0].clientY;
+                } else {
+                    // 鼠标事件
+                    x = e.clientX;
+                    y = e.clientY;
+                }
+                
+                // 随机选择特效类型
+                const effectType = Math.random();
+                
+                if (effectType < 0.3) {
+                    // 常规烟花
+                    createFirework(x, y);
+                } else if (effectType < 0.6) {
+                    // 环形烟花
+                    createRingFirework(x, y);
+                } else {
+                    // 星形烟花
+                    createStarFirework(x, y);
+                }
+                
+                // 随机生成爱心和花瓣
+                const particleCount = 8 + Math.floor(Math.random() * 12);
+                for (let i = 0; i < particleCount; i++) {
+                    setTimeout(() => {
+                        // 随机位置偏移
+                        const offsetX = (Math.random() * 100 - 50);
+                        const offsetY = (Math.random() * 100 - 50);
+                        
+                        // 50%概率生成爱心，50%概率生成花瓣
+                        if (Math.random() < 0.5) {
+                            createHeartParticle(
+                                x + offsetX,
+                                y + offsetY
+                            );
+                        } else {
+                            createPetalParticle(
+                                x + offsetX,
+                                y + offsetY
+                            );
+                        }
+                    }, i * 50);
+                }
+            }
+            
+            // 同时监听点击和触摸事件
+            body.addEventListener('click', handleInteraction);
+            body.addEventListener('touchstart', function(e) {
+                // 防止触摸时页面滚动
+                e.preventDefault();
+                handleInteraction(e);
+            }, { passive: false });
+            
+            // 告白按钮点击事件
+            confessBtn.addEventListener('click', function(e) {
+                e.stopPropagation(); // 防止触发全局点击事件
+                openConfessModal();
             });
             
-            requestAnimationFrame(animate);
-        }
-        
-        // 开始动画
-        animate();
-        
-        // 点击添加更多爱心
-        canvas.addEventListener('click', (e) => {
-            const newHeart = new Heart();
-            newHeart.x = e.clientX;
-            newHeart.y = e.clientY;
-            newHeart.vy = -Math.random() * 3 - 1;
-            hearts.push(newHeart);
+            // 告白按钮触摸事件
+            confessBtn.addEventListener('touchstart', function(e) {
+                e.stopPropagation();
+                e.preventDefault();
+                openConfessModal();
+            }, { passive: false });
+            
+            // 打开告白弹窗
+            function openConfessModal() {
+                confessModal.classList.remove('hidden');
+                
+                // 触发弹窗动画
+                setTimeout(() => {
+                    modalContent.classList.remove('scale-95', 'opacity-0');
+                    modalContent.classList.add('scale-100', 'opacity-100', 'transition-all', 'duration-500');
+                }, 10);
+                
+                // 生成大量爱心和烟花
+                for (let i = 0; i < 50; i++) {
+                    setTimeout(() => {
+                        const x = window.innerWidth / 2 + (Math.random() * 300 - 150);
+                        const y = window.innerHeight / 2 + (Math.random() * 200 - 100);
+                        
+                        // 随机生成爱心或花瓣
+                        if (Math.random() < 0.6) {
+                            createHeartParticle(x, y);
+                        } else {
+                            createPetalParticle(x, y);
+                        }
+                        
+                        // 每4个粒子生成一个烟花
+                        if (i % 4 === 0) {
+                            // 随机选择烟花类型
+                            if (Math.random() < 0.4) {
+                                createFirework(x, y);
+                            } else if (Math.random() < 0.7) {
+                                createRingFirework(x, y);
+                            } else {
+                                createStarFirework(x, y);
+                            }
+                        }
+                    }, i * 80);
+                }
+            }
+            
+            // 关闭弹窗
+            closeModal.addEventListener('click', function(e) {
+                e.stopPropagation(); // 防止触发全局点击事件
+                closeConfessModal();
+            });
+            
+            closeModal.addEventListener('touchstart', function(e) {
+                e.stopPropagation();
+                e.preventDefault();
+                closeConfessModal();
+            }, { passive: false });
+            
+            // 关闭告白弹窗
+            function closeConfessModal() {
+                modalContent.classList.remove('scale-100', 'opacity-100');
+                modalContent.classList.add('scale-95', 'opacity-0', 'transition-all', 'duration-300');
+                
+                setTimeout(() => {
+                    confessModal.classList.add('hidden');
+                }, 300);
+            }
+            
+            // 创建星空背景
+            function createStars() {
+                const starsContainer = document.getElementById('stars');
+                const starCount = Math.floor(window.innerWidth * window.innerHeight / 1500); // 根据屏幕大小调整星星数量
+                
+                for (let i = 0; i < starCount; i++) {
+                    const star = document.createElement('div');
+                    star.classList.add('star');
+                    
+                    // 随机大小
+                    const size = 1 + Math.random() * 3;
+                    star.style.width = `${size}px`;
+                    star.style.height = `${size}px`;
+                    
+                    // 随机位置
+                    star.style.left = `${Math.random() * 100}%`;
+                    star.style.top = `${Math.random() * 100}%`;
+                    
+                    // 随机闪烁动画延迟和持续时间
+                    star.style.animationDelay = `${Math.random() * 5}s`;
+                    star.style.animationDuration = `${2 + Math.random() * 3}s`;
+                    
+                    // 随机亮度
+                    const brightness = 0.3 + Math.random() * 0.7;
+                    star.style.opacity = brightness;
+                    
+                    starsContainer.appendChild(star);
+                }
+            }
+            
+            // 生成鲜花爱心
+            function createFlowerHeart() {
+                const container = document.getElementById('heart-container');
+                const containerRect = container.getBoundingClientRect();
+                const centerX = containerRect.width / 2;
+                const centerY = containerRect.height / 2;
+                // 根据容器大小调整爱心大小
+                const heartSize = Math.min(containerRect.width, containerRect.height) * 0.7;
+                
+                // 鲜花图片URL
+                const flowerImageUrl = 'https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/af15738350904cbd8953a6fedcac77b3.png~tplv-a9rns2rl98-24:720:720.png?rk3s=1fb89129&x-expires=1757086576&x-signature=YwGiouniPAsaV8LvPrZEgSpdl2A%3D';
+                
+                // 根据屏幕大小调整点数
+                const baseCount = 150;
+                const screenFactor = Math.min(window.innerWidth, window.innerHeight) / 600;
+                const pointsCount = Math.max(80, Math.floor(baseCount * screenFactor));
+                
+                // 生成爱心形状的点集
+                const points = generateHeartPoints(centerX, centerY, heartSize, pointsCount);
+                
+                // 为每个点创建一个鲜花图片
+                points.forEach((point, index) => {
+                    const flower = document.createElement('img');
+                    flower.src = flowerImageUrl;
+                    flower.alt = '粉色玫瑰花';
+                    
+                    // 根据屏幕大小调整花朵尺寸
+                    const baseSize = 10;
+                    const sizeFactor = Math.min(window.innerWidth, window.innerHeight) / 600;
+                    const size = baseSize * sizeFactor + (Math.random() * 10 * sizeFactor);
+                    
+                    flower.classList.add('petal');
+                    flower.style.width = `${size}px`;
+                    flower.style.height = 'auto';
+                    flower.style.left = `${point.x}px`;
+                    flower.style.top = `${point.y}px`;
+                    flower.style.transform = `rotate(${Math.random() * 360}deg)`;
+                    flower.style.opacity = 0.9 + Math.random() * 0.1;
+                    
+                    // 添加延迟动画，使花朵依次出现
+                    flower.style.transition = 'all 0.5s ease';
+                    flower.style.opacity = '0';
+                    flower.style.transform = `translate(-50%, -50%) rotate(${Math.random() * 360}deg) scale(0.5)`;
+                    
+                    container.appendChild(flower);
+                    
+                    // 触发动画
+                    setTimeout(() => {
+                        flower.style.opacity = '1';
+                        flower.style.transform = `translate(-50%, -50%) rotate(${Math.random() * 360}deg) scale(1)`;
+                    }, 100 + index * 10);
+                    
+                    // 为每个花朵添加轻微的浮动动画
+                    setTimeout(() => {
+                        flower.style.animation = `floating ${5 + Math.random() * 5}s ease-in-out infinite`;
+                        flower.style.animationDelay = `${Math.random() * 5}s`;
+                    }, 1000 + index * 10);
+                });
+            }
+            
+            // 生成爱心形状的点集
+            function generateHeartPoints(centerX, centerY, size, count) {
+                const points = [];
+                
+                for (let i = 0; i < count; i++) {
+                    // 参数方程生成爱心形状
+                    const t = (i / count) * Math.PI * 2;
+                    const x = 16 * Math.pow(Math.sin(t), 3);
+                    const y = 13 * Math.cos(t) - 5 * Math.cos(2*t) - 2 * Math.cos(3*t) - Math.cos(4*t);
+                    
+                    // 缩放并定位到中心
+                    const scaledX = centerX + x * (size / 20);
+                    const scaledY = centerY - y * (size / 20); // 负号是因为Y轴向下为正
+                    
+                    // 添加一些随机扰动，使分布更自然
+                    const jitterX = (Math.random() - 0.5) * (size / 15);
+                    const jitterY = (Math.random() - 0.5) * (size / 15);
+                    
+                    points.push({
+                        x: scaledX + jitterX,
+                        y: scaledY + jitterY
+                    });
+                }
+                
+                return points;
+            }
+            
+            // 创建常规烟花效果
+            function createFirework(x, y) {
+                const烟花颜色 = ['#FF6B6B', '#FFB7C5', '#FFD700', '#9370DB', '#E63946', '#FFA500', '#FF69B4'];
+                const color =烟花颜色[Math.floor(Math.random() * 烟花颜色.length)];
+                // 根据屏幕大小调整粒子数量
+                const baseParticleCount = 60;
+                const screenFactor = Math.min(window.innerWidth, window.innerHeight) / 600;
+                const particleCount = Math.floor(baseParticleCount * screenFactor) + Math.floor(Math.random() * 40 * screenFactor);
+                const explosionSize = 120 + Math.random() * 60;
+                
+                // 创建发射到点击位置的粒子
+                const launchParticle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+                launchParticle.setAttribute('cx', x);
+                launchParticle.setAttribute('cy', window.innerHeight);
+                launchParticle.setAttribute('r', 3);
+                launchParticle.setAttribute('fill', color);
+                particlesContainer.appendChild(launchParticle);
+                
+                // 发射动画
+                const duration = 800 + Math.random() * 500;
+                const startTime = Date.now();
+                
+                function animateLaunch() {
+                    const elapsed = Date.now() - startTime;
+                    const progress = Math.min(elapsed / duration, 1);
+                    
+                    // 缓动函数 - 先快后慢
+                    const easeProgress = 1 - Math.pow(1 - progress, 3);
+                    
+                    // 更新位置
+                    const currentY = window.innerHeight - (window.innerHeight - y) * easeProgress;
+                    launchParticle.setAttribute('cy', currentY);
+                    
+                    if (progress < 1) {
+                        requestAnimationFrame(animateLaunch);
+                    } else {
+                        // 到达目标位置后爆炸
+                        particlesContainer.removeChild(launchParticle);
+                        
+                        // 创建爆炸粒子
+                        for (let i = 0; i < particleCount; i++) {
+                            const angle = Math.random() * Math.PI * 2;
+                            const speed = Math.random() * explosionSize;
+                            
+                            const particle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+                            particle.setAttribute('cx', x);
+                            particle.setAttribute('cy', y);
+                            particle.setAttribute('r', 2 + Math.random() * 3);
+                            particle.setAttribute('fill', color);
+                            particle.setAttribute('opacity', 1);
+                            particlesContainer.appendChild(particle);
+                            
+                            // 爆炸动画
+                            const explodeDuration = 1000 + Math.random() * 500;
+                            const explodeStartTime = Date.now();
+                            
+                            function animateExplode() {
+                                const explodeElapsed = Date.now() - explodeStartTime;
+                                const explodeProgress = Math.min(explodeElapsed / explodeDuration, 1);
+                                
+                                // 粒子移动
+                                const currentX = x + Math.cos(angle) * speed * explodeProgress;
+                                const currentY = y + Math.sin(angle) * speed * explodeProgress;
+                                
+                                // 淡出效果
+                                const opacity = 1 - explodeProgress;
+                                
+                                particle.setAttribute('cx', currentX);
+                                particle.setAttribute('cy', currentY);
+                                particle.setAttribute('opacity', opacity);
+                                
+                                if (explodeProgress < 1) {
+                                    requestAnimationFrame(animateExplode);
+                                } else {
+                                    if (particle.parentNode === particlesContainer) {
+                                        particlesContainer.removeChild(particle);
+                                    }
+                                }
+                            }
+                            
+                            requestAnimationFrame(animateExplode);
+                        }
+                    }
+                }
+                
+                requestAnimationFrame(animateLaunch);
+            }
+            
+            // 创建环形烟花效果
+            function createRingFirework(x, y) {
+                const colors = ['#FF6B6B', '#FFB7C5', '#FFD700', '#9370DB', '#E63946', '#FFA500', '#FF69B4'];
+                // 根据屏幕大小调整粒子数量
+                const screenFactor = Math.min(window.innerWidth, window.innerHeight) / 600;
+                const particleCount = Math.floor(80 * screenFactor) + Math.floor(Math.random() * 40 * screenFactor);
+                const ringCount = 2 + Math.floor(Math.random() * 2); // 1-3个环
+                const baseRadius = 80 + Math.random() * 40;
+                
+                // 创建发射粒子
+                const launchParticle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+                launchParticle.setAttribute('cx', x);
+                launchParticle.setAttribute('cy', window.innerHeight);
+                launchParticle.setAttribute('r', 3);
+                launchParticle.setAttribute('fill', colors[0]);
+                particlesContainer.appendChild(launchParticle);
+                
+                // 发射动画
+                const duration = 700 + Math.random() * 400;
+                const startTime = Date.now();
+                
+                function animateLaunch() {
+                    const elapsed = Date.now() - startTime;
+                    const progress = Math.min(elapsed / duration, 1);
+                    const currentY = window.innerHeight - (window.innerHeight - y) * (1 - Math.pow(1 - progress, 3));
+                    launchParticle.setAttribute('cy', currentY);
+                    
+                    if (progress < 1) {
+                        requestAnimationFrame(animateLaunch);
+                    } else {
+                        particlesContainer.removeChild(launchParticle);
+                        
+                        // 创建环形爆炸
+                        for (let r = 0; r < ringCount; r++) {
+                            const radius = baseRadius * (r + 1);
+                            const color = colors[(r % colors.length)];
+                            
+                            setTimeout(() => {
+                                for (let i = 0; i < particleCount; i++) {
+                                    const angle = (i / particleCount) * Math.PI * 2;
+                                    const particleSize = 2 + Math.random() * 2;
+                                    
+                                    const particle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+                                    particle.setAttribute('cx', x);
+                                    particle.setAttribute('cy', y);
+                                    particle.setAttribute('r', particleSize);
+                                    particle.setAttribute('fill', color);
+                                    particle.setAttribute('opacity', 1);
+                                    particlesContainer.appendChild(particle);
+                                    
+                                    // 环爆炸动画
+                                    const explodeDuration = 900 + Math.random() * 300;
+                                    const explodeStartTime = Date.now();
+                                    
+                                    function animateRingExplode() {
+                                        const explodeElapsed = Date.now() - explodeStartTime;
+                                        const explodeProgress = Math.min(explodeElapsed / explodeDuration, 1);
+                                        
+                                        // 粒子沿圆周移动
+                                        const currentRadius = radius * explodeProgress;
+                                        const currentX = x + Math.cos(angle) * currentRadius;
+                                        const currentY = y + Math.sin(angle) * currentRadius;
+                                        
+                                        // 淡出效果
+                                        const opacity = 1 - explodeProgress;
+                                        
+                                        particle.setAttribute('cx', currentX);
+                                        particle.setAttribute('cy', currentY);
+                                        particle.setAttribute('opacity', opacity);
+                                        
+                                        if (explodeProgress < 1) {
+                                            requestAnimationFrame(animateRingExplode);
+                                        } else {
+                                            if (particle.parentNode === particlesContainer) {
+                                                particlesContainer.removeChild(particle);
+                                            }
+                                        }
+                                    }
+                                    
+                                    requestAnimationFrame(animateRingExplode);
+                                }
+                            }, r * 200); // 环之间有延迟
+                        }
+                    }
+                }
+                
+                requestAnimationFrame(animateLaunch);
+            }
+            
+            // 创建星形烟花效果
+            function createStarFirework(x, y) {
+                const colors = ['#FF6B6B', '#FFB7C5', '#FFD700', '#9370DB', '#E63946', '#FFA500', '#FF69B4'];
+                const points = 6 + Math.floor(Math.random() * 4); // 6-9个点
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                // 根据屏幕大小调整粒子数量
+                const screenFactor = Math.min(window.innerWidth, window.innerHeight) / 600;
+                const particleCountPerPoint = Math.floor(15 * screenFactor) + Math.floor(Math.random() * 10 * screenFactor);
+                const explosionSize = 100 + Math.random() * 50;
+                
+                // 创建发射粒子
+                const launchParticle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+                launchParticle.setAttribute('cx', x);
+                launchParticle.setAttribute('cy', window.innerHeight);
+                launchParticle.setAttribute('r', 3);
+                launchParticle.setAttribute('fill', color);
+                particlesContainer.appendChild(launchParticle);
+                
+                // 发射动画
+                const duration = 600 + Math.random() * 400;
+                const startTime = Date.now();
+                
+                function animateLaunch() {
+                    const elapsed = Date.now() - startTime;
+                    const progress = Math.min(elapsed / duration, 1);
+                    const currentY = window.innerHeight - (window.innerHeight - y) * (1 - Math.pow(1 - progress, 3));
+                    launchParticle.setAttribute('cy', currentY);
+                    
+                    if (progress < 1) {
+                        requestAnimationFrame(animateLaunch);
+                    } else {
+                        particlesContainer.removeChild(launchParticle);
+                        
+                        // 创建星形爆炸
+                        for (let p = 0; p < points; p++) {
+                            const angle = (p / points) * Math.PI * 2;
+                            
+                            for (let i = 0; i < particleCountPerPoint; i++) {
+                                // 每个点上的粒子有微小角度差异，形成线条效果
+                                const angleVariation = angle + (Math.random() * 0.2 - 0.1);
+                                const speed = (0.5 + Math.random() * 0.5) * explosionSize;
+                                
+                                const particle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+                                particle.setAttribute('cx', x);
+                                particle.setAttribute('cy', y);
+                                particle.setAttribute('r', 2 + Math.random() * 2);
+                                particle.setAttribute('fill', color);
+                                particle.setAttribute('opacity', 1);
+                                particlesContainer.appendChild(particle);
+                                
+                                // 星形爆炸动画
+                                const explodeDuration = 800 + Math.random() * 400;
+                                const explodeStartTime = Date.now();
+                                
+                                function animateStarExplode() {
+                                    const explodeElapsed = Date.now() - explodeStartTime;
+                                    const explodeProgress = Math.min(explodeElapsed / explodeDuration, 1);
+                                    
+                                    // 粒子移动
+                                    const currentX = x + Math.cos(angleVariation) * speed * explodeProgress;
+                                    const currentY = y + Math.sin(angleVariation) * speed * explodeProgress;
+                                    
+                                    // 淡出效果
+                                    const opacity = 1 - explodeProgress;
+                                    
+                                    particle.setAttribute('cx', currentX);
+                                    particle.setAttribute('cy', currentY);
+                                    particle.setAttribute('opacity', opacity);
+                                    
+                                    if (explodeProgress < 1) {
+                                        requestAnimationFrame(animateStarExplode);
+                                    } else {
+                                        if (particle.parentNode === particlesContainer) {
+                                            particlesContainer.removeChild(particle);
+                                        }
+                                    }
+                                }
+                                
+                                requestAnimationFrame(animateStarExplode);
+                            }
+                        }
+                    }
+                }
+                
+                requestAnimationFrame(animateLaunch);
+            }
+            
+            // 创建爱心粒子
+            function createHeartParticle(x, y) {
+                const heart = document.createElementNS("http://www.w3.org/2000/svg", "path");
+                // 根据屏幕大小调整爱心大小
+                const screenFactor = Math.min(window.innerWidth, window.innerHeight) / 600;
+                const size = (8 + Math.random() * 12) * screenFactor;
+                const colors = ['#E63946', '#FF4D6D', '#FF9AAA', '#9370DB', '#FF69B4', '#FFB7C5'];
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                
+                // 爱心路径
+                heart.setAttribute('d', `M${x},${y} C${x+size},${y-size} ${x+2*size},${y} ${x},${y+1.5*size} C${x-2*size},${y} ${x-size},${y-size} ${x},${y} Z`);
+                heart.setAttribute('fill', color);
+                heart.setAttribute('opacity', 0.8);
+                
+                // 添加到容器
+                particlesContainer.appendChild(heart);
+                
+                // 随机方向和旋转
+                const angle = Math.random() * Math.PI * 2;
+                const rotationSpeed = (Math.random() - 0.5) * 0.01; // 旋转速度
+                const speed = 2 + Math.random() * 3;
+                const duration = 2000 + Math.random() * 1000;
+                const startTime = Date.now();
+                let rotation = 0;
+                
+                function animateHeart() {
+                    const elapsed = Date.now() - startTime;
+                    const progress = Math.min(elapsed / duration, 1);
+                    
+                    // 旋转角度
+                    rotation += rotationSpeed;
+                    
+                    // 移动爱心
+                    const currentX = x + Math.cos(angle) * speed * progress * 20;
+                    const currentY = y + Math.sin(angle) * speed * progress * 20;
+                    
+                    // 淡出并放大
+                    const opacity = 1 - progress;
+                    const scale = 1 + progress * 0.5;
+                    
+                    heart.setAttribute('transform', `translate(${currentX - x}, ${currentY - y}) rotate(${rotation * 180 / Math.PI}) scale(${scale})`);
+                    heart.setAttribute('opacity', opacity);
+                    
+                    if (progress < 1) {
+                        requestAnimationFrame(animateHeart);
+                    } else {
+                        if (heart.parentNode === particlesContainer) {
+                            particlesContainer.removeChild(heart);
+                        }
+                    }
+                }
+                
+                requestAnimationFrame(animateHeart);
+            }
+            
+            // 创建花瓣粒子
+            function createPetalParticle(x, y) {
+                const petal = document.createElementNS("http://www.w3.org/2000/svg", "path");
+                // 根据屏幕大小调整花瓣大小
+                const screenFactor = Math.min(window.innerWidth, window.innerHeight) / 600;
+                const size = (6 + Math.random() * 10) * screenFactor;
+                const colors = ['#FFB7C5', '#FF8FA3', '#FF6B6B', '#FFD7E5', '#FFA5B0'];
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                
+                // 花瓣路径
+                petal.setAttribute('d', `M${x},${y} Q${x+size/2},${y-size} ${x+size},${y} Q${x+size/2},${y+size/2} ${x},${y} Z`);
+                petal.setAttribute('fill', color);
+                petal.setAttribute('opacity', 0.8);
+                
+                // 添加到容器
+                particlesContainer.appendChild(petal);
+                
+                // 随机飘落效果
+                const angle = Math.PI/4 + Math.random() * Math.PI/2; // 向右下方飘落
+                const rotationSpeed = (Math.random() - 0.5) * 0.02; // 旋转速度
+                const speed = 1 + Math.random() * 2;
+                const duration = 3000 + Math.random() * 2000;
+                const startTime = Date.now();
+                let rotation = 0;
+                
+                function animatePetal() {
+                    const elapsed = Date.now() - startTime;
+                    const progress = Math.min(elapsed / duration, 1);
+                    
+                    // 旋转角度
+                    rotation += rotationSpeed;
+                    
+                    // 移动花瓣（加入重力效果）
+                    const gravityFactor = 1 + progress * 2;
+                    const currentX = x + Math.cos(angle) * speed * progress * 40;
+                    const currentY = y + Math.sin(angle) * speed * progress * 40 * gravityFactor;
+                    
+                    // 淡出
+                    const opacity = 1 - progress;
+                    
+                    petal.setAttribute('transform', `translate(${currentX - x}, ${currentY - y}) rotate(${rotation * 180 / Math.PI})`);
+                    petal.setAttribute('opacity', opacity);
+                    
+                    if (progress < 1) {
+                        requestAnimationFrame(animatePetal);
+                    } else {
+                        if (petal.parentNode === particlesContainer) {
+                            particlesContainer.removeChild(petal);
+                        }
+                    }
+                }
+                
+                requestAnimationFrame(animatePetal);
+            }
+            
+            // 屏幕旋转时重新布局
+            window.addEventListener('resize', function() {
+                // 清除现有花朵
+                const container = document.getElementById('heart-container');
+                const petals = container.querySelectorAll('.petal');
+                petals.forEach(petal => petal.remove());
+                
+                // 重新生成爱心
+                createFlowerHeart();
+            });
         });
     </script>
-</body>
-</html>
+</body></html>
